@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"database/sql"
 
@@ -28,8 +27,9 @@ func main() {
 
 	cmds.register("login", handlerLogin)
 	cmds.register("register", handlerRegister)
+	cmds.register("reset", handlerReset)
 
-	if len(os.Args) < 3 {
+	if len(os.Args) < 2 {
 		fmt.Println("a minimum of 2 command line arguments must be passed with gator")
 		os.Exit(1)
 	}
@@ -40,7 +40,8 @@ func main() {
 
 	err = cmds.run(state, command{name: cmdName, args: cmdArgs})
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("error: %s\n", err)
+		os.Exit(1)
 	}
 
 }

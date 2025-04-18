@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/benjaminafoster/gator/internal/database"
@@ -32,7 +31,7 @@ func handlerLogin(s *State, cmd command) error {
     if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			// User does not exist, provide error. You can't log in with a user that doesn't exist
-			os.Exit(1)
+			return fmt.Errorf("couldn't find user: %w", err)
 			//return fmt.Errorf("user does not exist")
 		} else {
 			// Some other error occurred
@@ -79,7 +78,7 @@ func handlerRegister(s *State, cmd command) error {
         }
     } else {
         // User already exists
-		os.Exit(1)
+		return fmt.Errorf("user already exists")
     }
 
 	s.CfgPtr.SetUser(userName)
@@ -87,6 +86,17 @@ func handlerRegister(s *State, cmd command) error {
 	fmt.Printf("user '%s' successfully registered\n",s.CfgPtr.CurrentUser)
 
     return nil
+}
+
+func handlerReset(s *State, cmd command) error {
+	if len(cmd.args) != 0 {
+		return fmt.Errorf("reset command takes no additional arguments")
+	}
+
+	fmt.Println("users database successfully reset")
+	s.Db.DeleteAllUsers(context.Background())
+
+	return nil
 }
 
 type commands struct {
@@ -99,8 +109,8 @@ func (c *commands) register(name string, f func(*State, command) error) {
 
 func (c *commands) run(s *State, cmd command) error {
 	if f, exists := c.registeredCommands[cmd.name]; exists {
-		f(s, cmd)
-		return nil
+		err := f(s, cmd)
+		return err
 	}
 
 	return fmt.Errorf("error executing command: %s", cmd.name)

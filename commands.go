@@ -99,6 +99,26 @@ func handlerReset(s *State, cmd command) error {
 	return nil
 }
 
+func handlerUsers(s *State, cmd command) error {
+	if len(cmd.args) != 0 {
+		return fmt.Errorf("users command takes no additional arguments")
+	}
+
+	users, err := s.Db.GetUsers(context.Background())
+	if err != nil {
+		return fmt.Errorf("error getting user names from users database: %w", err)
+	}
+	for _, user := range users {
+		if user == s.CfgPtr.CurrentUser {
+			fmt.Printf("%s (current)\n", user)
+		} else {
+			fmt.Printf("%s\n", user)
+		}
+	}
+
+	return nil
+}
+
 type commands struct {
 	registeredCommands         map[string]func(*State, command) error
 }

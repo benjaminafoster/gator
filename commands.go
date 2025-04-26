@@ -134,6 +134,43 @@ func handlerAgg(_ *State, cmd command) error {
 	return nil
 }
 
+func handlerAddFeed(s *State, cmd command) error {
+	if len(cmd.args) != 2 {
+		return fmt.Errorf("addfeed usage: gator <name_of_feed> <url_of_feed>")
+	}
+
+	name := cmd.args[0]
+	url := cmd.args[1]
+
+	db_user, err := s.Db.GetUser(context.Background(),s.CfgPtr.CurrentUser)
+	if err != nil {
+		return fmt.Errorf("error retrieving current user name from users db: %w", err)
+	}
+
+	user_id := db_user.ID
+
+	params := database.AddFeedParams{
+		ID: uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		Name: name,
+		Url: url,
+		UserID: user_id,
+	}
+
+	feed, err := s.Db.AddFeed(context.Background(), params)
+	if err != nil {
+		return fmt.Errorf("error adding feed to feeds database: %w", err)
+	}
+
+	fmt.Println("Successfully added a feed with the following details:")
+	fmt.Printf("Name: %s\n", feed.Name)
+	fmt.Printf("URL: %s\n", feed.Url)
+
+	return nil
+
+}
+
 type commands struct {
 	registeredCommands         map[string]func(*State, command) error
 }

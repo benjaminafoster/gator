@@ -119,6 +119,21 @@ func handlerUsers(s *State, cmd command) error {
 	return nil
 }
 
+func handlerAgg(_ *State, cmd command) error {
+	if len(cmd.args) != 0 {
+		return fmt.Errorf("agg command takes no additional parameters")
+	}
+	
+	feed, err := fetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
+	if err != nil {
+		return fmt.Errorf("error fetching the feed: %w", err)
+	}
+
+
+	fmt.Printf("%+v\n", feed)
+	return nil
+}
+
 type commands struct {
 	registeredCommands         map[string]func(*State, command) error
 }

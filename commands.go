@@ -171,6 +171,31 @@ func handlerAddFeed(s *State, cmd command) error {
 
 }
 
+func handlerGetFeeds(s *State, cmd command) error {
+	if len(cmd.args) != 0 {
+		return fmt.Errorf("usage: gator feeds")
+	}
+	feedsSlice, err := s.Db.GetFeeds(context.Background())
+	if err != nil {
+		return fmt.Errorf("error retrieving feeds data from database: %w", err)
+	}
+
+	for _, feed := range feedsSlice {
+		user_id := feed.UserID
+		user, err := s.Db.GetUserById(context.Background(),user_id)
+		if err != nil {
+			return fmt.Errorf("error retrieving user name by id: %w", err)
+		}
+		user_name := user.Name
+		s.Db.GetUser(context.Background(), user_name)
+		fmt.Printf("Feed name: %s\n", feed.Name)
+		fmt.Printf("Feed URL: %s\n", feed.Url)
+		fmt.Printf("Feed created by: %s\n\n",user_name)
+	}
+
+	return nil
+}
+
 type commands struct {
 	registeredCommands         map[string]func(*State, command) error
 }

@@ -6,7 +6,6 @@ import (
 )
 
 func handlerLogin(s *State, cmd Command) error {
-	fmt.Printf("Num args: %d\n", len(cmd.args))
 	if len(cmd.args) == 0 {
 		return errors.New("username is required")
 	}
@@ -21,6 +20,6 @@ func handlerLogin(s *State, cmd Command) error {
 		return fmt.Errorf("failed to login: %w", err)
 	}
 	
-	fmt.Printf("Logged in as %s\n", username)
+	//fmt.Printf("Logged in as %s\n", username)
 	return err
 }

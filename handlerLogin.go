@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"errors"
+	"context"
 )
 
 func handlerLogin(s *State, cmd Command) error {
@@ -15,11 +16,16 @@ func handlerLogin(s *State, cmd Command) error {
 	}
 	
 	username := cmd.args[0]
-	err := s.cfg.SetUser(username)
+	
+	dbUser, err := s.db.GetUser(context.Background(), username)
 	if err != nil {
-		return fmt.Errorf("failed to login: %w", err)
+		return fmt.Errorf("failed to get user while logging in: %w", err)
 	}
 	
-	//fmt.Printf("Logged in as %s\n", username)
+	err = s.cfg.SetUser(dbUser.Name)
+	if err != nil {
+		return fmt.Errorf("failed to setting user after logging in: %w", err)
+	}
+	
 	return err
 }

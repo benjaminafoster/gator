@@ -13,6 +13,7 @@ func GetCommands() *Commands {
 		cmds: map[string]func(s *State, cmd Command) error{
 			"login": handlerLogin,
 			"register": handlerRegister,
+			"reset": handlerReset,
 		},
 	}
 	return cmds

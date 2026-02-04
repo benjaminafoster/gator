@@ -15,6 +15,7 @@ func GetCommands() *Commands {
 			"register": handlerRegister,
 			"reset": handlerReset,
 			"users": handlerUsers,
+			"agg": handlerAggregate,
 		},
 	}
 	return cmds

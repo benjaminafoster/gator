@@ -17,6 +17,7 @@ func GetCommands() *Commands {
 			"users": handlerUsers,
 			"agg": handlerAggregate,
 			"addfeed": handlerAddFeed,
+			"feeds": handlerFeeds,
 		},
 	}
 	return cmds

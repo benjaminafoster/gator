@@ -18,7 +18,7 @@ func GetCommands() *Commands {
 			"agg": handlerAggregate,
 			"addfeed": middlewareLoggedIn(handlerAddFeedv2),
 			"feeds": handlerFeeds,
-			"follow": handlerFollow,
+			"follow": middlewareLoggedIn(handlerFollowv2),
 			"following": handlerFollowing,
 		},
 	}

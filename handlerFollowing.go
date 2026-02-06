@@ -10,7 +10,13 @@ func handlerFollowing(s *State, cmd Command) error {
 		return fmt.Errorf("Usage: gator following\n")
 	}
 	
-	following, err := s.db.GetFeedFollowsForUser(context.Background())
+	currentUsername := s.cfg.CurrentUser
+	currentUser, err := s.db.GetUser(context.Background(), currentUsername)
+	if err != nil {
+		return fmt.Errorf("Failed to get current user: %v", err)
+	}
+	
+	following, err := s.db.GetFeedFollowsForUser(context.Background(), currentUser.ID)
 	if err != nil {
 		return fmt.Errorf("Failed to get following list: %v", err)
 	}

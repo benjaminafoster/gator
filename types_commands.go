@@ -16,7 +16,7 @@ func GetCommands() *Commands {
 			"reset": handlerReset,
 			"users": handlerUsers,
 			"agg": handlerAggregate,
-			"addfeed": handlerAddFeed,
+			"addfeed": middlewareLoggedIn(handlerAddFeedv2),
 			"feeds": handlerFeeds,
 			"follow": handlerFollow,
 			"following": handlerFollowing,

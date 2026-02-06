@@ -65,11 +65,11 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	return &feed, nil
 }
 
-func addFeed(s *State, name string, url string) error {
+func addFeed(s *State, name string, url string) (database.Feed, error) {
 	currentUser := s.cfg.CurrentUser
 	dbUser, err := s.db.GetUser(context.Background(), currentUser)
 	if err != nil {
-		return fmt.Errorf("failed to get user: %w\n", err)
+		return database.Feed{}, fmt.Errorf("failed to get user: %w\n", err)
 	}
 	feedParams := database.CreateFeedParams{
 		ID: uuid.New(),
@@ -82,9 +82,41 @@ func addFeed(s *State, name string, url string) error {
 	
 	feed, err := s.db.CreateFeed(context.Background(), feedParams)
 	if err != nil {
-		return fmt.Errorf("failed to create feed: %w\n", err)
+		return database.Feed{},fmt.Errorf("failed to create feed: %w\n", err)
 	}
 	
-	fmt.Printf("New feed added: %s\n", feed.Name)
-	return nil
+	
+	return feed, nil
+}
+
+func followFeed(s *State, url string) (database.CreateFeedFollowRow, error) {
+	currentUsername := s.cfg.CurrentUser
+	currentUser, err := s.db.GetUser(context.Background(), currentUsername)
+	if err != nil {
+		return database.CreateFeedFollowRow{}, fmt.Errorf("Failed to get current user: %w", err)
+	}
+	
+	currentUserId := currentUser.ID
+	
+	feed, err := s.db.GetFeedByUrl(context.Background(), url)
+	if err != nil {
+		return database.CreateFeedFollowRow{}, fmt.Errorf("Failed to get feed by URL: %w", err)
+	}
+	
+	feedID := feed.ID
+	
+	followParams := database.CreateFeedFollowParams{
+		ID: uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		UserID: currentUserId,
+		FeedID: feedID,
+	}
+	
+	feedFollow, err := s.db.CreateFeedFollow(context.Background(), followParams)
+	if err != nil {
+		return database.CreateFeedFollowRow{}, fmt.Errorf("Failed to create feed follow: %w", err)
+	}
+	
+	return feedFollow, nil
 }

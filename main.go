@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+
 	"github.com/benjaminafoster/gator/internal/config"
 	"github.com/benjaminafoster/gator/internal/database"
 	_ "github.com/lib/pq"
@@ -33,6 +34,11 @@ func main() {
 	
 	
 	commands := GetCommands()
+	
+	if len(os.Args) == 1 {
+		fmt.Println("Usage: gator <command> [args]")
+		os.Exit(1)
+	}
 	
 	commandName := os.Args[1]
 	commandArgs := os.Args[2:]

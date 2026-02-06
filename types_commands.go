@@ -19,7 +19,7 @@ func GetCommands() *Commands {
 			"addfeed": middlewareLoggedIn(handlerAddFeedv2),
 			"feeds": handlerFeeds,
 			"follow": middlewareLoggedIn(handlerFollowv2),
-			"following": handlerFollowing,
+			"following": middlewareLoggedIn(handlerFollowingv2),
 		},
 	}
 	return cmds

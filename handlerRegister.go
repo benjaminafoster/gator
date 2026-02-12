@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"errors"
 	"context"
 	"time"
 	"github.com/google/uuid"
@@ -11,13 +10,10 @@ import (
 
 func handlerRegister(state *State, cmd Command) error {
 	/* Usage: gator register <name> */
-	if len(cmd.args) == 0 {
-		return errors.New("a name is required to register")
+	if len(cmd.args) != 1 {
+		return fmt.Errorf("Usage: gator register <name>\n")
 	}
 	
-	if len(cmd.args) > 1 {
-		return errors.New("too many arguments")
-	}
 	newUser := database.CreateUserParams{
 		ID: uuid.New(),
 		CreatedAt: time.Now(),
@@ -28,12 +24,12 @@ func handlerRegister(state *State, cmd Command) error {
 	
 	dbUser, err := state.db.CreateUser(context.Background(), newUser)
 	if err != nil {
-		return fmt.Errorf("failed to create user: %w", err)
+		return fmt.Errorf("failed to create user: %w\n", err)
 	}
 	
 	err = state.cfg.SetUser(dbUser.Name)
 	if err != nil {
-		return fmt.Errorf("failed to set user: %w", err)
+		return fmt.Errorf("failed to set user: %w\n", err)
 	}
 	
 	fmt.Printf("User %s registered successfully\n", dbUser.Name)

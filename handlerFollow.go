@@ -11,7 +11,7 @@ import (
 
 func handlerFollow(s *State, cmd Command) error {
 	if len(cmd.args) != 1 {
-		return fmt.Errorf("Usage: gator follow <feed_url>")
+		return fmt.Errorf("Usage: gator follow <feed_url>\n")
 	}
 	
 	feedUrl := cmd.args[0]
@@ -29,14 +29,14 @@ func handlerFollow(s *State, cmd Command) error {
 
 func handlerFollowv2(s *State, cmd Command, user database.User) error {
 	if len(cmd.args) != 1 {
-		return fmt.Errorf("Usage: gator follow <feed_url>")
+		return fmt.Errorf("Usage: gator follow <feed_url>\n")
 	}
 	
 	feedUrl := cmd.args[0]
 	
 	feedRow, err := s.db.GetFeedByUrl(context.Background(), feedUrl)
 	if err != nil {
-		return fmt.Errorf("Error fetching feed: %w", err)
+		return fmt.Errorf("Error fetching feed: %w\n", err)
 	}
 	
 	followParams := database.CreateFeedFollowParams{

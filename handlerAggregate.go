@@ -8,7 +8,7 @@ import (
 
 func handlerAggregate(s *State, cmd Command) error {
 	if len(cmd.args) != 0 {
-		return fmt.Errorf("agg command accepts no arguments\n")
+		return fmt.Errorf("Usage: gator agg\n")
 	}
 	
 	feedUrl := "https://www.wagslane.dev/index.xml"

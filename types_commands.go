@@ -20,6 +20,7 @@ func GetCommands() *Commands {
 			"feeds": handlerFeeds,
 			"follow": middlewareLoggedIn(handlerFollowv2),
 			"following": middlewareLoggedIn(handlerFollowingv2),
+			"unfollow": middlewareLoggedIn(handlerUnfollow),
 		},
 	}
 	return cmds

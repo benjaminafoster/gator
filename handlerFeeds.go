@@ -7,7 +7,7 @@ import (
 
 func handlerFeeds(s *State, cmd Command) error {
 	if len(cmd.args) != 0 {
-		return fmt.Errorf("the feeds command accepts no arguments\n")
+		return fmt.Errorf("Usage: gator feeds\n")
 	}
 	
 	feeds, err := s.db.GetFeeds(context.Background())

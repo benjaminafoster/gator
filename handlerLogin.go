@@ -2,17 +2,12 @@ package main
 
 import (
 	"fmt"
-	"errors"
 	"context"
 )
 
 func handlerLogin(s *State, cmd Command) error {
-	if len(cmd.args) == 0 {
-		return errors.New("username is required")
-	}
-	
-	if len(cmd.args) > 1 {
-		return errors.New("too many arguments")
+	if len(cmd.args) != 1 {
+		return fmt.Errorf("Usage: gator login <username>")
 	}
 	
 	username := cmd.args[0]

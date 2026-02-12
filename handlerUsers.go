@@ -2,18 +2,17 @@ package main
 
 import (
 	"fmt"
-	"errors"
 	"context"
 )
 
 func handlerUsers(s *State, cmd Command) error {
 	if len(cmd.args) != 0 {
-		return errors.New("users command takes no arguments")
+		return fmt.Errorf("Usage: gator users\n")
 	}
 	
 	users, err := s.db.GetUsers(context.Background())
 	if err != nil {
-		return fmt.Errorf("failed to get users: %w", err)
+		return fmt.Errorf("failed to get users: %w\n", err)
 	}
 	
 	for _, user := range users {

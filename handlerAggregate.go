@@ -5,6 +5,10 @@ import (
 	"fmt"
 	"html"
 	"time"
+	"strings"
+	"log"
+	"github.com/google/uuid"
+	"github.com/benjaminafoster/gator/internal/database"
 )
 
 func handlerAggregate(s *State, cmd Command) error {
@@ -18,7 +22,7 @@ func handlerAggregate(s *State, cmd Command) error {
 		return fmt.Errorf("failed to parse duration: %w\n", err)
 	}
 	
-	fmt.Printf("Collecting feeds every %s...\n", parsedDuration)
+	log.Printf("Collecting feeds every %s...\n", parsedDuration)
 	
 	ticker := time.NewTicker(parsedDuration)
 	for ; ; <- ticker.C {
@@ -61,7 +65,29 @@ func scrapeFeeds(s *State) error {
 	fmt.Printf("Printing posts found in %s...\n", unescapedFeed.Channel.Title)
 	
 	for _, item := range unescapedFeed.Channel.Item {
-		fmt.Printf("Found post: %s\n", item.Title)
+		pubDate, err := time.Parse(time.RFC1123Z, item.PubDate)
+		if err != nil {
+			return fmt.Errorf("failed to parse pubDate: %w\n", err)
+		}
+		
+		createPostsParams := database.CreatePostParams{
+			ID: uuid.New(),
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+			Title: item.Title,
+			Url: item.Link,
+			Description: item.Description,
+			PublishedAt: pubDate,
+			FeedID: nextFeedID,
+		}
+		
+		_, err = s.db.CreatePost(context.Background(), createPostsParams)
+		if err != nil {
+			if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+				continue
+			}
+			log.Printf("failed to create post: %v\n", err)
+		}
 	}
 	
 	return nil

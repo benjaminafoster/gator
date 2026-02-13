@@ -62,7 +62,7 @@ func scrapeFeeds(s *State) error {
 	
 	unescapedFeed := unescapeHTML(feed)
 	
-	fmt.Printf("Printing posts found in %s...\n", unescapedFeed.Channel.Title)
+	fmt.Printf("Aggregating posts from %s...\n", unescapedFeed.Channel.Title)
 	
 	for _, item := range unescapedFeed.Channel.Item {
 		pubDate, err := time.Parse(time.RFC1123Z, item.PubDate)

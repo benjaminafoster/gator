@@ -11,5 +11,16 @@ VALUES (
 	$8
 ) RETURNING *;
 
--- name: GetPosts :many
-SELECT * FROM posts ORDER BY published_at ASC LIMIT $1;
+-- name: GetPostsByUserID :many
+WITH feed_follows_by_user_id AS (
+    SELECT
+        feed_follows.*
+    FROM feed_follows
+    INNER JOIN users ON feed_follows.user_id = users.id
+    WHERE users.id = $1
+)
+SELECT
+    posts.*
+FROM posts
+INNER JOIN feed_follows_by_user_id ON posts.feed_id = feed_follows_by_user_id.feed_id
+LIMIT $2;

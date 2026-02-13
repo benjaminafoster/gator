@@ -21,6 +21,7 @@ func GetCommands() *Commands {
 			"follow": middlewareLoggedIn(handlerFollowv2),
 			"following": middlewareLoggedIn(handlerFollowingv2),
 			"unfollow": middlewareLoggedIn(handlerUnfollow),
+			"browse": middlewareLoggedIn(handlerBrowse),
 		},
 	}
 	return cmds

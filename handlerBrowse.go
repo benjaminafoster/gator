@@ -13,7 +13,7 @@ func handlerBrowse(s *State, cmd Command, user database.User) error {
 	}
 	
 	var limit int32
-	limit = 2
+	limit = 5
 	
 	if len(cmd.args) == 1 {
 		limitStr := cmd.args[0]
